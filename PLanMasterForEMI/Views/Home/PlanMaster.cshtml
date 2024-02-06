@@ -1,0 +1,44 @@
+﻿@model PLanMasterForEMI.Models.CreateSchemeViewModel
+@{
+    ViewBag.Title = "PlanMaster";
+}
+
+
+@using (Html.BeginForm("PostPlanMaster", "Home", FormMethod.Post))
+{
+    <div class="card justify-content-center mx-auto" style="width:40%">
+        <h3 class="mb-4 card-header">Create Scheme</h3>
+        <div class="p-1 me-4 ms-4">
+            <table class="table table-borderless">
+                <tr>
+                    <td>Plan Name</td>
+                    <td><input name="PlanName" class="form-control" type="text" /></td>
+                </tr>
+                <tr>
+                    <td>Tenure(Months)</td>
+                    <td><input name="Tenure" class="form-control" type="text" /></td>
+                </tr>
+                <tr>
+                    <td>ROI(%)</td>
+                    <td><input name="ROI" class="form-control" type="text" /></td>
+                </tr>
+            </table>
+        </div>
+        <div class="card-footer">
+            <div class="text-end"><button class="btn btn-success" style="width:25%">Save</button>
+            </div>
+            @if (IsPost)
+            {
+                if (@ViewBag.Result == "Saved Successfully")
+                {
+                    <h6 class="text-success">@ViewBag.Result</h6>
+                }
+                else
+                {
+                    <h6 class="text-danger">@ViewBag.Result</h6>
+                }
+            }
+        </div>
+    </div>
+}
+

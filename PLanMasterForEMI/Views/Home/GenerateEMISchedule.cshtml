@@ -1,0 +1,121 @@
+﻿@model List<PLanMasterForEMI.Models.EMISchedule>
+@{
+    ViewBag.Title = "GenerateEMISchedule";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<h3 class="ms-5 mb-5 text-decoration-underline">Generated EMI Schedule</h3>
+
+<div class="row ms-5 p-3 border border-3 border-primary-subtle rounded-3">
+    <div class="col-lg-5 ms-3 me-5">
+        <div class="card">
+            <div class="card-header">
+                <h5>EMI Schedule</h5>
+            </div>
+            <div class="p-3">
+                <table class="table table-borderless">
+                    <tr>
+                        <td>Select Plan Name</td>
+                        <td>
+                            <select class="form-select" id="planName">
+                                <option>----Select Scheme----</option>
+                                <option value="Personal Loan">Personal Loan</option>
+                                <option value="Business Loan">Business Loan</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tenure</td>
+                        <td><input class="form-control" type="text" disabled name="Tenure" id="tenure" /></td>
+                    </tr>
+                    <tr>
+                        <td>ROI</td>
+                        <td><input class="form-control" type="text" disabled name="ROI" id="roi" /></td>
+                    </tr>
+                    <tr>
+                        <td>Enter Loan Amount</td>
+                        <td><input class="form-control" type="text" name="name" id="loanAmount" value="" /></td>
+                    </tr>
+                    <tr>
+                        <td>Loan Date</td>
+                        <td><input class="form-control" type="date" id="loanDate" name="name" value="" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="text-end"><button id="calculateEmi" class="btn btn-primary">Calculate EMI</button></td>
+
+                    </tr>
+                    <tr>
+                        <td>EMI Amount</td>
+                        <td><input class="form-control" type="text" id="emiAmount" disabled name="name" value="" /></td>
+                    </tr>
+                </table> 
+            </div>
+            <div class="text-end card-footer">
+                <a href="/Home/GenerateSchedule" class="btn btn-success">Generate Schedule</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 card p-3">
+        <table class="table table-bordered">
+            <tr class="table-dark">
+                <th>EMI No</th>
+                <th>Due Date</th>
+                <th>EMI Amount</th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.EMIScheduleId</td>
+                    <td>@item.LoanDate.ToString("dd/MM/yyyy")</td>
+                    <td>@item.EMIAmount</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+<script>
+    $('#planName').change(function () {
+        var selectedValue = $(this).val();
+
+        $.ajax({
+            url: '/Home/GetTenureROI',
+            method: 'POST',
+            data: { planName: selectedValue },
+            type: 'application/json',
+            success: function (response) {
+                $('#tenure').val(response.Tenure);
+                $('#roi').val(response.ROI);
+            },
+            error: function () {
+
+            }
+        });
+    })
+
+    $('#calculateEmi').click(function () {
+        var loanAmount = $('#loanAmount').val();
+        var loanDate = $('#loanDate').val();
+        var tenure = $('#tenure').val();
+        var roi = $('#roi').val();
+
+        $.ajax({
+            url: '/Home/CalculateEMI',
+            method: 'POST',
+            data: {
+                LoanAmount : loanAmount,
+                ROI:roi,
+                Tenure:tenure,
+                LoanDate:loanDate
+            },
+            type: 'application/json',
+            success: function (response) {
+                $('#emiAmount').val(response.toFixed(4));
+            },
+            error: function () {
+
+            }
+        });
+    })
+</script>
+
